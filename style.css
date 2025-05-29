@@ -1,0 +1,47 @@
+ /* Custom styles if needed */
+        .hero-bg-gradient {
+            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 50%, #fff1f2 100%); /* Subtle pinkish gradient */
+        }
+        .vertical-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+        .brand-pink { color: #FF3D7A; }
+        .bg-brand-pink { background-color: #FF3D7A; }
+        .border-brand-pink { border-color: #FF3D7A; }
+        .underline-brand-pink {
+            text-decoration-color: #FF3D7A;
+            text-decoration-thickness: 3px;
+            text-underline-offset: 6px; /* Adjust as needed */
+        }
+        .brand-dark-blue { color: #0F172A; } /* slate-900 */
+        .bg-brand-dark-blue { background-color: #0F172A; }
+        .brand-green { color: #16A34A; } /* green-600 */
+        .bg-brand-green { background-color: #5CB85C; } /* From image */
+
+        /* Mobile menu transition */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+        }
+        #mobile-menu.hidden-menu { /* Use a custom class to avoid conflict with Tailwind's hidden */
+            transform: translateX(-100%);
+        }
+        .dotted-bg-left {
+            position: relative;
+        }
+        .dotted-bg-left::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 60px;
+            height: 120px;
+            background-image: radial-gradient(circle, #fda4af 1px, transparent 1px); /* pink-300 */
+            background-size: 10px 10px;
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .border-right{
+            border-right: 3px solid #eee;
+        }

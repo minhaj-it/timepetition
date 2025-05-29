@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimePetition - Online Exam System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="style.css"> REMOVED - Assuming Tailwind will handle all styling -->
+    <style>
+        /* Custom utility-like classes and component styles */
+        .hero-bg-gradient {
+            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 50%, #fff1f2 100%);
+        }
+        .vertical-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+        /* Custom color definitions - these could also be configured in tailwind.config.js if using a build step */
+        .brand-pink { color: #FF3D7A; }
+        .bg-brand-pink { background-color: #FF3D7A; }
+        .border-brand-pink { border-color: #FF3D7A; }
+        .underline-brand-pink {
+            text-decoration-color: #FF3D7A;
+            text-decoration-thickness: 3px;
+            text-underline-offset: 6px;
+        }
+        .brand-dark-blue { color: #0F172A; } /* Example: Slate 900 */
+        .bg-brand-dark-blue { background-color: #0F172A; }
+        .brand-green { color: #16A34A; } /* Example: Green 600 */
+        .bg-brand-green { background-color: #5CB85C; } /* From image */
+
+        /* Mobile menu specific styles */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+        }
+        #mobile-menu.hidden-menu { /* Custom class to manage visibility with transform */
+            transform: translateX(-100%);
+        }
+        /* Dotted background for hero section */
+        .dotted-bg-left {
+            position: relative;
+        }
+        .dotted-bg-left::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 60px;
+            height: 120px;
+            background-image: radial-gradient(circle, #fda4af 1px, transparent 1px); /* pink-300 */
+            background-size: 10px 10px;
+            opacity: 0.5;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <!-- Header -->
+    <header class="py-4 px-4 md:px-8 lg:px-16 shadow-sm relative z-50 bg-white">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold brand-dark-blue">Time<span class="brand-pink">Petition</span></a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center">
+                <!-- Left side links -->
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="hover:text-pink-500 py-2"> হোম </a>
+                    
+                    <div class="relative group"> 
+                        <button class="hover:text-pink-500 flex items-center py-2">
+                            ক্লাস <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </button>
+                        <div class="absolute left-0 mt-1 w-40 bg-white shadow-lg rounded py-1 z-[51]
+                                    opacity-0 invisible pointer-events-none 
+                                    group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto
+                                    transform translate-y-2 group-hover:translate-y-0
+                                    transition-all duration-300 ease-in-out">
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">এসএসসি </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">এইচএসসি  </a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="hover:text-pink-500 py-2"> আমাদের সম্পর্কে</a>
+                    <a href="#" class="hover:text-pink-500 py-2"> পরীক্ষা</a>
+                    <a href="#" class="hover:text-pink-500 py-2">Contact</a>
+                </div>
+
+                <!-- Right side items: Search, Version, Join Now -->
+                <div class="ml-6 flex items-center space-x-4">
+                    <form id="desktop-search-form" class="hidden items-center">
+                        <input type="text" placeholder="Search..." class="px-3 py-1.5 border border-gray-300 rounded-l-md focus:ring-pink-500 focus:border-pink-500 text-sm w-48">
+                        <button type="button" id="desktop-search-close-button" class="bg-gray-200 text-gray-700 px-2 py-1.5 h-[34px] border border-l-0 border-gray-300 rounded-r-md hover:bg-gray-300">
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
+                    </form>
+
+                    <div id="desktop-search-activators" class="flex items-center space-x-4">
+                        <div class="relative group"> 
+                            <button class="hover:text-pink-500 flex items-center py-2">
+                                Version <i class="fas fa-chevron-down text-xs ml-1"></i>
+                            </button>
+                            <div class="absolute right-0 mt-1 w-24 bg-white shadow-lg rounded py-1 z-[51]
+                                        opacity-0 invisible pointer-events-none 
+                                        group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto
+                                        transform translate-y-2 group-hover:translate-y-0
+                                        transition-all duration-300 ease-in-out">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">English</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">বাংলা</a>
+                            </div>
+                        </div>
+                        <button id="desktop-search-open-button" class="text-gray-700 hover:text-pink-500 py-2">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <a href="#" id="desktop-join-now-button" class="bg-brand-pink text-white px-6 py-2 rounded-md hover:bg-pink-700 transition duration-300">Join Now</a>
+                </div>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="lg:hidden fixed inset-0 bg-white p-6 space-y-3 transform -translate-x-full shadow-lg z-40 overflow-y-auto hidden-menu">
+            <div class="flex justify-between items-center mb-6">
+                <a href="#" class="text-3xl font-bold brand-dark-blue">Time<span class="brand-pink">Petition</span></a>
+                <button id="mobile-menu-close-button" class="text-gray-700 focus:outline-none">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <a href="#" class="block py-2 hover:text-pink-500">Home</a>
+            
+            <div>
+                <button id="mobile-courses-button" class="w-full flex justify-between items-center py-2 hover:text-pink-500">
+                    <span>Class</span> <i id="mobile-courses-icon" class="fas fa-chevron-down text-xs"></i>
+                </button>
+                <div id="mobile-courses-submenu" class="hidden pl-4 space-y-1 mt-1">
+                    <a href="#" class="block py-1 text-sm hover:text-pink-500">SSC </a>
+                    <a href="#" class="block py-1 text-sm hover:text-pink-500">HSC </a>
+                </div>
+            </div>
+
+            <a href="#" class="block py-2 hover:text-pink-500">About</a>
+            <a href="#" class="block py-2 hover:text-pink-500">Exam </a>
+            <a href="#" class="block py-2 hover:text-pink-500">Contact</a>
+
+            <div>
+                <button id="mobile-lang-button" class="w-full flex justify-between items-center py-2 hover:text-pink-500">
+                    <span>Version</span> <i id="mobile-lang-icon" class="fas fa-chevron-down text-xs"></i>
+                </button>
+                <div id="mobile-lang-submenu" class="hidden pl-4 space-y-1 mt-1">
+                    <a href="#" class="block py-1 text-sm hover:text-pink-500">English</a>
+                    <a href="#" class="block py-1 text-sm hover:text-pink-500">বাংলা</a>
+                </div>
+            </div>
+            
+            <div class="py-2">
+                <button id="mobile-search-open-button" class="w-full text-left flex items-center hover:text-pink-500">
+                    <i class="fas fa-search mr-2"></i> Search
+                </button>
+                <form id="mobile-search-form" class="hidden mt-2">
+                    <input type="text" placeholder="Search..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500 text-sm">
+                </form>
+            </div>
+
+            <a href="#" class="block mt-4 bg-brand-pink text-white text-center px-6 py-3 rounded-md hover:bg-pink-700 transition duration-300">Join Now</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-bg-gradient py-10 md:py-20 relative overflow-hidden dotted-bg-left">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16 flex flex-col lg:flex-row items-center">
+            <div class="hidden lg:flex flex-col items-center space-y-4 absolute left-4 lg:left-8 top-1/2 transform -translate-y-1/2 z-10">
+                <a href="#" class="text-gray-600 hover:text-brand-pink"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-gray-600 hover:text-brand-pink"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-600 hover:text-brand-pink"><i class="fab fa-linkedin-in"></i></a>
+                <span class="vertical-text text-sm text-gray-500 mt-4">আমাদের সঙ্গে যুক্ত থাকুন</span>
+            </div>
+            <div class="lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0 relative z-10">
+                <p class="text-lg brand-pink font-semibold mb-2">ডিজিটাল প্ল্যাটফর্মে স্মার্ট লার্নিং সলিউশন</p>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold brand-dark-blue leading-tight">
+                    শিক্ষা বিনিয়োগ নয় <br/> এটি একটি <span class="brand-pink underline underline-brand-pink">  ভবিষ্যৎ  </span> <br class="hidden md:block"> গড়ার উপায়।
+                </h1>
+                <p class="text-gray-600 mt-6 mb-8 max-w-md mx-auto lg:mx-0">
+                    শিক্ষা এমন এক আলো, যা অন্ধকারকে জ্ঞানে রূপান্তর করে। ডিজিটাল প্ল্যাটফর্মে স্মার্ট লার্নিং সলিউশন
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#" class="bg-brand-pink text-white px-8 py-3 rounded-md font-semibold hover:bg-pink-700 transition duration-300 flex items-center justify-center">
+                        প্যাকেজ সমূহ <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="#" class="bg-brand-dark-blue text-white px-8 py-3 rounded-md font-semibold hover:bg-slate-700 transition duration-300 flex items-center justify-center">
+                        যোগাযোগ করুন <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="lg:w-1/2 relative mt-10 lg:mt-0 flex justify-center items-center">
+                <img src="img/hero-1.png" alt="E-Learning" class="rounded-lg max-w-sm md:max-w-md z-10">
+                <div class="absolute bottom-10 -left-4 md:left-0 bg-white p-4 rounded-lg shadow-xl z-20 flex items-center space-x-3 w-48">
+                    <div class="bg-blue-100 text-blue-500 p-2 rounded-full"><img class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="img/hero-user.png" alt="Tutor Icon"></div>
+                    <div>
+                        <p class="font-bold text-xl">৫০ + শিক্ষক</p>
+                    </div>
+                </div>
+                <div class="absolute top-10 -right-4 md:right-0 bg-white p-4 rounded-lg shadow-xl z-20 w-56">
+                     <div class="flex items-center space-x-2 mb-2">
+                        <div class="bg-pink-100 text-pink-500 p-2 rounded-full"><i class="fas fa-users"></i></div>
+                        <p class="font-semibold"> ভর্তিকৃত শিক্ষার্থী</p>
+                    </div>
+                    <p class="font-bold text-3xl brand-pink">১০০০+</p>
+                    <div class="flex -space-x-2 mt-2">
+                        <!-- Assuming team-1.png is a placeholder for multiple student images or a composite image -->
+                        <img class="inline-block h-10 w-auto rounded-full ring-2 ring-white" src="img/team-1.png" alt="Students">
+                    </div>
+                </div>
+                <div class="absolute inset-0 opacity-20">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                      <path fill="#FFD3E0" d="M48.5,-59.8C63.4,-52.7,76.5,-39.5,82.5,-23.7C88.5,-7.9,87.4,10.4,78.7,23.8C70.1,37.2,53.9,45.7,39.1,53.9C24.3,62.1,10.9,70,-3.1,72.4C-17.1,74.8,-30.6,71.8,-43.7,64.4C-56.8,57,-69.4,45.2,-75.3,30.9C-81.2,16.6,-80.4,-0.2,-75.2,-15.5C-70,-30.8,-60.4,-44.6,-47.8,-52.5C-35.2,-60.4,-19.6,-62.4,-3.5,-60.7C12.6,-59,23.6,-53.2,34.6,-53.2C45.6,-53.2,57,-58.5,48.5,-59.8Z" transform="translate(100 100) scale(1.2)" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 ">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="text-4xl brand-pink mb-4"><i class="fas fa-book-open"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">প্রস্তুতি এবং পরীক্ষা</h3>
+                    <a href="#" class="text-pink-500 font-medium hover:underline"> বিস্তারিত <i class="fas fa-arrow-right text-xs"></i></a>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="text-4xl brand-pink mb-4"><i class="fas fa-laptop-code"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">এমসিকিউ, সিকিউ, এসকিউ </h3>
+                    <a href="#" class="text-pink-500 font-medium hover:underline"> বিস্তারিত <i class="fas fa-arrow-right text-xs"></i></a>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="text-4xl brand-pink mb-4"><i class="fas fa-user-tie"></i></div>
+                    <h3 class="text-xl font-semibold mb-2"> বোর্ড প্রশ্ন</h3>
+                    <a href="#" class="text-pink-500 font-medium hover:underline"> বিস্তারিত <i class="fas fa-arrow-right text-xs"></i></a>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="text-4xl brand-pink mb-4"><i class="fas fa-user-tie"></i></div>
+                    <h3 class="text-xl font-semibold mb-2"> দক্ষ শিক্ষক </h3>
+                    <a href="#" class="text-pink-500 font-medium hover:underline"> বিস্তারিত <i class="fas fa-arrow-right text-xs"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- "টাইম পিটিশন কিন্তু পিডিএফ প্রশ্নব্যাংক নয়!" Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                টাইম পিটিশন কিন্তু <span class="brand-pink border-2 border-brand-pink rounded-full px-2 py-1">পিডিএফ</span> প্রশ্নব্যাংক নয়!
+            </h2>
+            <p class="max-w-3xl mx-auto text-gray-600 mb-12">
+                টাইম পিটিশন দেশের প্রথম এবং একমাত্র পেপারলেস স্মার্ট প্রশ্নব্যাংক। যেখানে প্রশ্ন ও সমাধান গুলো এমনভাবে সাজানো হয়েছে এবং সার্চ ও ফিল্টার অপশন গুলো দিয়ে武装 করে খুব সহজেই কিভাবে প্রশ্ন ও সমাধান খুঁজে বের করা যায় জানতে এই ভিডিওটি দেখুন।
+            </p>
+            <!-- Replaced custom 'border-right' with Tailwind's divide utility for medium screens and up -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 md:divide-x md:divide-gray-300">
+                <div class="text-center py-4 md:py-0 md:pr-4">
+                    <p class="text-3xl font-bold brand-pink">২৪+</p>
+                    <p class="text-gray-600">বিষয়</p>
+                </div>
+                <div class="text-center py-4 md:py-0 md:px-4">
+                    <p class="text-3xl font-bold brand-pink">৬৯৮+</p>
+                    <p class="text-gray-600">শিক্ষার্থী</p>
+                </div>
+                <div class="text-center py-4 md:py-0 md:px-4">
+                    <p class="text-3xl font-bold brand-pink">৪+</p>
+                    <p class="text-gray-600">ক্লাস</p>
+                </div>
+                <div class="text-center py-4 md:py-0 md:pl-4"> <!-- Last item has no right border from divide-x -->
+                    <p class="text-3xl font-bold brand-pink">৭২+</p>
+                    <p class="text-gray-600">শিক্ষক</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- "পেপারলেস স্মার্ট প্রশ্নব্যাংকে শিক্ষার্থীরা যা যা পাচ্ছে" Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-2">
+                পেপারলেস <span class="brand-pink underline underline-brand-pink">স্মার্ট প্রশ্নব্যাংকে</span>
+            </h2>
+            <p class="text-center text-xl text-gray-700 mb-12">শিক্ষার্থীরা যা যা পাচ্ছে</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="img/img_logo_blue.webp" alt="ভর্তি পরীক্ষার প্রশ্নব্যাংক" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">ভর্তি পরীক্ষার প্রশ্নব্যাংক</h3>
+                        <p class="text-gray-600 text-sm">ইঞ্জিনিয়ারিং, মেডিকেল, গুচ্ছ সহ সকল বিশ্ববিদ্যালয়ের সব ধরণের ভর্তি পরীক্ষার প্রশ্নব্যাংক ও ব্যাখ্যাসহ সমাধান</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="img/img_logo_blue.webp" alt="পরীক্ষা ও মুল্যায়ন" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">পরীক্ষা ও মুল্যায়ন</h3>
+                        <p class="text-gray-600 text-sm">নিজে নিজে আনলিমিটেড মডেল টেস্ট ও standaard পরীক্ষা দেয়ার ব্যবস্থা এবং স্বয়ংক্রিয় মুল্যায়ন</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="img/img_logo_blue.webp" alt="বোর্ড ও টেস্ট পরীক্ষার প্রশ্নব্যাংক" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">বোর্ড ও টেস্ট পরীক্ষার প্রশ্নব্যাংক</h3>
+                        <p class="text-gray-600 text-sm">সকল বোর্ড এবং স্কুল/কলেজের টেস্ট পরীক্ষার প্রশ্নব্যাংক ও ব্যাখ্যাসহ সমাধান</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- "(প্রশ্ন তৈরি) সফটওয়্যার কেন ব্যবহার করবেন?" Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                (<span class="brand-pink border-2 border-brand-pink rounded-full px-2 py-1">প্রশ্ন তৈরি</span>) সফটওয়্যার কেন ব্যবহার করবেন?
+            </h2>
+            <p class="max-w-3xl mx-auto text-gray-600 mb-8">
+                পরীক্ষা শুরু করার অল্প কিছু সময় আগেই টাইপিং এবং প্রুফ রিডিংয়ের মতো ঝামেলা ছাড়াই তৈরী করে ফেলুন উত্তরপত্র সহ প্রশ্ন। সময় ও অর্থ বাঁচবে, প্রশ্ন ফাঁস বন্ধ হবে!
+            </p>
+            <a href="#" class="bg-brand-green text-white px-8 py-3 rounded-md font-semibold hover:bg-green-700 transition duration-300 text-lg">
+                প্রশ্ন তৈরি করুন এখনই
+            </a>
+        </div>
+    </section>
+
+    <!-- Four Feature Cards Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="text-4xl brand-green mb-4"><i class="fas fa-list-ul"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">আনলিমিটেড প্রশ্ন</h3>
+                    <p class="text-gray-600 text-sm">প্রতি অধ্যায়ের টপিক ভিত্তিক প্রশ্ন যুক্ত করা হয়েছে</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="text-4xl brand-green mb-4"><i class="fas fa-file-alt"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">অটো উত্তরপত্র তৈরি</h3>
+                    <p class="text-gray-600 text-sm">প্রশ্ন তৈরি করলে স্বয়ংক্রিয় ভাবে উত্তরপত্র তৈরি হবে</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="text-4xl brand-green mb-4"><i class="fas fa-check-circle"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">নির্ভুল প্রশ্ন ও সমাধান</h3>
+                    <p class="text-gray-600 text-sm">সকল প্রশ্নের নির্ভুল ও তথ্যবহুল ব্যাখ্যাসহ সমাধান</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="text-4xl brand-green mb-4"><i class="fas fa-database"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">প্রশ্ন তৈরীতে পৃথক ডাটাবেজ</h3>
+                    <p class="text-gray-600 text-sm">শিক্ষকদের জন্য অসংখ্য প্রশ্ন সংরক্ষণের পৃথক ডাটাবেজ</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-2">
+                দেখে নিন কি বলছেন (<span class="brand-pink border-2 border-brand-pink rounded-full px-1">টাইম পিটিশন</span>) ব্যবহারকারীরা
+            </h2>
+            <p class="text-center text-lg text-gray-700 mb-12">শিক্ষক থেকে শুরু করে শিক্ষার্থী, পিছিয়ে নেই অভিভাবকেরাও!</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                    <i class="fas fa-quote-left text-3xl brand-pink opacity-50 mb-4"></i>
+                    <p class="text-gray-600 mb-4 text-sm">"প্রশ্ন তৈরি করার ফিচারটি অসাধারণ। কারণ আমার খুব একটা সময় ব্যয় করতে হচ্ছে না প্রশ্ন তৈরি করতে। পুরোপুরি প্রশ্ন তৈরির ফিচারটি রেডি হয়ে গেলে আমাদের জন্য অনেক ভালো হবে।"</p>
+                    <p class="font-semibold">Minhaz Shuvo Sir</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                    <i class="fas fa-quote-left text-3xl brand-pink opacity-50 mb-4"></i>
+                    <p class="text-gray-600 mb-4 text-sm">"গ্রেট এপস, একজন শিক্ষার্থীর জন্য কত বড় উপকার, সেটা ডাউনলোড না করলে বুঝবে না। গরিব ছাত্রদের আর হাজার হাজার টাকার গাইড কেনা লাগবে না। ভালোবাসা রইলো টাইম পিটিশনর প্রতি।"</p>
+                    <p class="font-semibold">Minhajul Islam Minhaj</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                    <i class="fas fa-quote-left text-3xl brand-pink opacity-50 mb-4"></i>
+                    <p class="text-gray-600 mb-4 text-sm">"আমি অনেক প্রশ্ন তৈরির ফিচারটি খুবি ভালো লেগেছে। সিলেক্ট করে একটা প্রশ্ন তৈরি করাটা খুব চমৎকার। এখানে প্রশ্ন তৈরি করে SAVE হচ্ছে।"</p>
+                    <p class="font-semibold">Hridoy Matber Sir</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-gray-300 pt-16 pb-8">
+        <div class="container mx-auto px-4 md:px-8 lg:px-16">
+            <div class="text-center mb-10">
+                <!-- Footer logo text changed from "daricomma" to "TimePetition" for consistency -->
+                <a href="#" class="text-3xl font-bold text-white"><i class="fas fa-check-circle text-green-400 mr-2"></i>Time<span class="brand-pink">Petition</span></a>
+                <p class="mt-2 text-sm max-w-xl mx-auto">প্রশ্নব্যাংক, বইপত্র, প্রশ্ন-তৈরী, পরীক্ষা দেয়া ও নেয়া সহ সকল শিক্ষা উপকরণ টাইম পিটিশনে শতভাগ ডিজিটাল।</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h5 class="font-semibold text-white mb-4">কোম্পানি</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-pink-400">আমাদের সম্পর্কে</a></li>
+                        <li><a href="#" class="hover:text-pink-400">রিফান্ড পলিসি</a></li>
+                        <li><a href="#" class="hover:text-pink-400">প্রাইভেসী পলিসি</a></li>
+                        <li><a href="#" class="hover:text-pink-400">টার্মস এবং কন্ডিশন</a></li>
+                        <li><a href="#" class="hover:text-pink-400">ক্যানসেলেশন পলিসি</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold text-white mb-4">যোগাযোগ</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="tel:01329637000" class="hover:text-pink-400">Contact Us: 01329637000</a></li>
+                        <li><a href="https://wa.me/01329637001" class="hover:text-pink-400">WhatsApp: 01329637001</a></li>
+                        <li><a href="tel:013296370026" class="hover:text-pink-400">Support: 01329637002-6</a></li>
+                        <li><a href="mailto:info.daricomma@gmail.com" class="hover:text-pink-400">Email: info.timepetition@example.com</a></li> <!-- Updated email -->
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold text-white mb-4">কমিউনিটি</h5>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="text-xl hover:text-pink-400"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-xl hover:text-pink-400"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-xl hover:text-pink-400"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="text-xl hover:text-pink-400"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <p class="text-xs mb-4">&copy; ২০২৩ টাইম পিটিশন লিঃ কর্তৃক সর্বস্বত্ব সংরক্ষিত</p>
+                    <a href="#" class="inline-block">
+                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="h-12">
+                    </a>
+                </div>
+                 <div>
+                    <h5 class="font-semibold text-white mb-4">পেমেন্ট করুন যেকোনো মাধ্যমে</h5>
+                    <div class="flex flex-wrap gap-2 items-center mb-6">
+                        <img src="https://via.placeholder.com/50x30?text=bKash" alt="bKash" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=Rocket" alt="Rocket" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=Nagad" alt="Nagad" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=upay" alt="upay" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=tap" alt="tap" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=VISA" alt="VISA" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=Master" alt="MasterCard" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=DBBL N" alt="DBBL Nexus" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=DBBL M" alt="DBBL Master" class="h-6 bg-gray-200 p-1 rounded">
+                        <img src="https://via.placeholder.com/50x30?text=DBBL V" alt="DBBL Visa" class="h-6 bg-gray-200 p-1 rounded">
+                    </div>
+                    <h5 class="font-semibold text-white text-sm">টাইম পিটিশন লিমিটেড</h5>
+                    <p class="text-xs">কোম্পানী নং: C-187390</p>
+                    <p class="text-xs">ট্রেড লাইসেন্স- 1230032399</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-xs">
+                <p>টাইম পিটিশন - একটি সম্পূর্ণ ডিজিটাল শিক্ষা প্ল্যাটফর্ম</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenuCloseButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.remove('hidden-menu', '-translate-x-full');
+                mobileMenu.classList.add('translate-x-0');
+            });
+
+            mobileMenuCloseButton.addEventListener('click', () => {
+                mobileMenu.classList.add('-translate-x-full');
+                mobileMenu.classList.remove('translate-x-0');
+                setTimeout(() => {
+                     if (mobileMenu.classList.contains('-translate-x-full')) {
+                        mobileMenu.classList.add('hidden-menu');
+                     }
+                }, 300);
+            });
+        }
+
+        // Desktop Search Toggle
+        const desktopSearchForm = document.getElementById('desktop-search-form');
+        const desktopSearchOpenButton = document.getElementById('desktop-search-open-button');
+        const desktopSearchCloseButton = document.getElementById('desktop-search-close-button');
+        const desktopSearchActivators = document.getElementById('desktop-search-activators');
+        const desktopJoinNowButton = document.getElementById('desktop-join-now-button');
+
+
+        if (desktopSearchOpenButton && desktopSearchForm && desktopSearchCloseButton && desktopSearchActivators) {
+            desktopSearchOpenButton.addEventListener('click', () => {
+                desktopSearchForm.classList.remove('hidden');
+                desktopSearchActivators.classList.add('hidden');
+                desktopSearchForm.querySelector('input').focus();
+                 if(desktopJoinNowButton) desktopJoinNowButton.classList.add('lg:ml-[10.5rem]'); // Adjust Join Now button position
+            });
+
+            desktopSearchCloseButton.addEventListener('click', () => {
+                desktopSearchForm.classList.add('hidden');
+                desktopSearchActivators.classList.remove('hidden');
+                if(desktopJoinNowButton) desktopJoinNowButton.classList.remove('lg:ml-[10.5rem]');
+            });
+        }
+        
+        // Mobile Courses Dropdown
+        const mobileCoursesButton = document.getElementById('mobile-courses-button');
+        const mobileCoursesSubmenu = document.getElementById('mobile-courses-submenu');
+        const mobileCoursesIcon = document.getElementById('mobile-courses-icon');
+
+        if (mobileCoursesButton && mobileCoursesSubmenu && mobileCoursesIcon) {
+            mobileCoursesButton.addEventListener('click', () => {
+                mobileCoursesSubmenu.classList.toggle('hidden');
+                mobileCoursesIcon.classList.toggle('fa-chevron-down');
+                mobileCoursesIcon.classList.toggle('fa-chevron-up');
+            });
+        }
+
+        // Mobile Language Dropdown
+        const mobileLangButton = document.getElementById('mobile-lang-button');
+        const mobileLangSubmenu = document.getElementById('mobile-lang-submenu');
+        const mobileLangIcon = document.getElementById('mobile-lang-icon');
+
+        if (mobileLangButton && mobileLangSubmenu && mobileLangIcon) {
+            mobileLangButton.addEventListener('click', () => {
+                mobileLangSubmenu.classList.toggle('hidden');
+                mobileLangIcon.classList.toggle('fa-chevron-down');
+                mobileLangIcon.classList.toggle('fa-chevron-up');
+            });
+        }
+
+        // Mobile Search Toggle
+        const mobileSearchOpenButton = document.getElementById('mobile-search-open-button');
+        const mobileSearchForm = document.getElementById('mobile-search-form');
+
+        if (mobileSearchOpenButton && mobileSearchForm) {
+            mobileSearchOpenButton.addEventListener('click', () => {
+                mobileSearchForm.classList.toggle('hidden');
+                if (!mobileSearchForm.classList.contains('hidden')) {
+                    mobileSearchForm.querySelector('input').focus();
+                }
+            });
+        }
+
+    </script> 
+
+</body>
+</html>
